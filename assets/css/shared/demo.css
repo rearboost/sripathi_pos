@@ -1,0 +1,48 @@
+.td-center {
+  text-align: center;
+}
+.size {
+  font-size: larger;
+}
+.pointer {
+  cursor: pointer;
+}
+.dataTables_length {
+  display: none;
+}
+#example_info {
+  display: none;
+}
+#example_paginate {
+  display: none;
+}
+#example1_info {
+  display: none;
+}
+#example1_paginate {
+  display: none;
+}
+.p_margin {
+  margin-bottom: 2rem;
+}
+.float_ledt {
+  float: left;
+  width: 50%;
+}
+.float_rigth {
+  float: right;
+  width: 50%;
+}
+.y_form {
+  padding: 25px;
+}
+.print-size {
+  width: 790px;
+  height: 550px;
+  border: 1px solid;
+}
+.botton-table {
+  height: 2px !important;
+  padding: 8px 15px !important;
+  font-size: 0.8rem !important;
+}
