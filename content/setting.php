@@ -26,6 +26,7 @@ include('../include/config.php');
                   <div class="quick-link-wrapper w-100 d-md-flex flex-md-wrap">
                     <ul class="quick-links">
                       <li><a href="#"> | SETTINGS</a></li>
+                      <li><a href="#"> USER SETTING</a></li>
                     </ul>
                   </div>
                 </div>

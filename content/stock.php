@@ -168,6 +168,7 @@
                           <th>Item</th>
                           <th>measurement</th>
                           <th>Weight(mg)</th>
+                          <th>Price</th>
                           <th>Note</th>
                           <th>Edit</th>
                           <th>Delete</th>
@@ -187,12 +188,14 @@
                             $measurement  = $row['measurement'];
                             $weight       = $row['weight'];
                             $note         = $row['note'];
+                            $price        = $row['price'];
 
                               echo ' <tr>';
                               echo ' <td>'.$i.' </td>';
                               echo ' <td>'.$item_name.' </td>';
                               echo ' <td>'.$measurement.'k </td>';
                               echo ' <td>'.$weight.' </td>';
+                              echo ' <td>'.$price.' </td>';
                               echo ' <td>'.$note.' </td>';
 
                               echo '<td class="td-center"><button type="button" onclick="editForm('.$row["id"].')" class="btn btn-info btn-fw">Edit</button></td>';

@@ -6,73 +6,46 @@
         if(isset($_POST['addrow'])){
 
             $product_name = $_POST['product_name'];
-            $quantity = $_POST['quantity'];
-            $warranty = $_POST['warranty'];
-            $serial_no = $_POST['serial_no'];
+            $measurement = $_POST['measurement'];
+            $weight = $_POST['weight'];
 
-            $get_price = "SELECT B.max_price AS price , B.stock_quantity AS stock , A.ID AS post_id 
-                            FROM wp_posts A 
-                            INNER JOIN wp_wc_product_meta_lookup B
-                            ON A.ID = B.product_id WHERE A.post_title = '$product_name'";
+            $get_price = "SELECT * 
+                            FROM material_stock 
+                            WHERE item_name = '$product_name' AND measurement='$measurement'";
 
             $result_price = mysqli_query($conn,$get_price);
-            $check = mysqli_num_rows($result_price);
+            //$check = mysqli_num_rows($result_price);
 
-            if(!empty($check)){
 
-                $row = mysqli_fetch_assoc($result_price);
-                $price  = $row['price'];
-                $stock  = $row['stock']-1;
-                $post_id  = $row['post_id'];
+            $row = mysqli_fetch_assoc($result_price);
+            $price  = $row['price'];
+            //$weight  = $row['weight']-1;
+            $tot_weight  = $row['weight']-$weight;
 
-                $meta_key = "_regular_price";
-                $get_discount = "SELECT * FROM wpss_postmeta WHERE post_id='$post_id' AND meta_key ='$meta_key'";
-                $result_discount = mysqli_query($conn,$get_discount);
-                $check_count = mysqli_num_rows($result_discount);
-                if($check_count>0){
-                    $discount  = $result_discount['meta_value']-$price;
-                }else{
-                    $discount  = "0.00";
-                }
-                
-            }else{
-
-                $get_price2 = "SELECT max_price AS price , stock_qty AS stock , discount
-                            FROM dashboard_items  
-                            WHERE item = '$product_name'";
-
-                $result_price2 = mysqli_query($conn,$get_price2);
-                $row2 = mysqli_fetch_assoc($result_price2);
-                $price  = $row2['price'];
-                $stock  = $row2['stock']-1;
-                $discount  = $row2['discount'];
-            }
-
-            $sql ="SELECT * FROM temp_pos WHERE product= '$product_name'";
+            $sql ="SELECT * FROM temp_pos WHERE product= '$product_name' AND measurement='$measurement'";
             $result=mysqli_query($conn,$sql);
             $row_get = mysqli_fetch_assoc($result);
             $count =mysqli_num_rows($result);
-            $stock_quantity = $row_get['stock_quantity'];
+            $stock_weight = $row_get['stock_weight'];
 
             $stockEmptyCode = 0;
 
-            $amount = $quantity * $price;
-            $discount = $discount * $quantity;
+            $amount = $weight * $price;
 
-            if($stock>0){
+            if($tot_weight>0){
 
                 if($count==0){
                 
-                    $sql_temp = "INSERT INTO  temp_pos (product,warranty,serial_no,qty,price,discount,amount,stock_quantity) VALUES ('$product_name','$warranty','$serial_no','$quantity','$price','$discount','$amount','$stock')";
+                    $sql_temp = "INSERT INTO  temp_pos (product,measurement,weight,price,amount,stock_weight) VALUES ('$product_name','$measurement','$weight','$price','$amount','$tot_weight')";
                     $result_temp = mysqli_query($conn,$sql_temp);
                 
                 }else{
 
-                    if($stock_quantity>0){
+                    if($stock_weight>0){
 
                         $sql_temp = "UPDATE temp_pos
-                        SET qty = qty + $quantity, amount = amount + $amount , discount= discount + $discount ,stock_quantity = stock_quantity - $quantity
-                        WHERE product= '$product_name'";
+                        SET weight = weight + $weight, amount = amount + $amount, stock_weight = stock_weight - $weight
+                        WHERE product= '$product_name' AND measurement='$measurement'";
                         $result_temp = mysqli_query($conn,$sql_temp);
                     }else{
 
@@ -134,9 +107,7 @@
             $total = $_POST['total'];
             $discount = $_POST['discount'];
             $payment = $_POST['payment'];
-            $credit_period = $_POST['credit_period'];
             $customer = $_POST['customer'];
-            $billing_address = $_POST['billing_address'];
             $date = $_POST['date'];
 
             $payment_type = $_POST['payment_type'];
@@ -152,7 +123,7 @@
                 $card_type = $_POST['card_type'];
             }
 
-            $sql_invoice = "INSERT INTO  invoice (total,discount,payment,credit_period,customer,billing_address,date,payment_type,bank,cheque_no,cheque_dueDate,card_type,card_no) VALUES ('$total','$discount','$payment','$credit_period','$customer','$billing_address','$date','$payment_type','$bank','$cheque_no','$due_date','$card_type','$card_no')";
+            $sql_invoice = "INSERT INTO  invoice (total,discount,payment,customer,date,payment_type,bank,cheque_no,cheque_dueDate,card_type,card_no) VALUES ('$total','$discount','$payment','$customer','$date','$payment_type','$bank','$cheque_no','$due_date','$card_type','$card_no')";
             mysqli_query($conn,$sql_invoice);
 
             $sql ="SELECT id FROM invoice ORDER BY id DESC LIMIT 1";
@@ -169,14 +140,12 @@
                 while($row = mysqli_fetch_assoc($sql_temp)) {
 
                     $product=$row['product'];
-                    $qty=$row['qty'];
+                    $measurement=$row['measurement'];
+                    $weight=$row['weight'];
                     $price=$row['price'];
-                    $discount=$row['discount'];
                     $amount=$row['amount'];
-                    $warranty=$row['warranty'];
-                    $serial_no=$row['serial_no'];
 
-                    $sql_invoice_items = "INSERT INTO invoice_items (invoice_id,product,warranty,serial_no,qty,price,discount,amount) VALUES ('$invoice_id','$product','$warranty','$serial_no','$qty','$price','$discount','$amount')";
+                    $sql_invoice_items = "INSERT INTO invoice_items (invoice_id,product,measurement,weight,price,amount) VALUES ('$invoice_id','$product','$measurement','$weight','$price','$amount')";
                     mysqli_query($conn,$sql_invoice_items);
                 }
             }

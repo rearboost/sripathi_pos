@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2021 at 02:17 AM
+-- Generation Time: Jun 02, 2021 at 01:22 AM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 5.5.30
 
@@ -39,7 +39,8 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`id`, `name`, `address`, `nic`, `contact`) VALUES
-(1, 'anne fernando', 'Alwiz road, Bentara', '984567892V', 771234567);
+(1, 'anne fernando', 'Alwiz road, Bentara', '984567892V', 771234567),
+(2, 'Imashi Liyanage', 'Egodamulla, Ahungalla', '952550057V', 771234567);
 
 -- --------------------------------------------------------
 
@@ -78,6 +79,13 @@ CREATE TABLE `invoice` (
   `card_no` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `invoice`
+--
+
+INSERT INTO `invoice` (`id`, `total`, `discount`, `payment`, `customer`, `date`, `payment_type`, `bank`, `cheque_no`, `cheque_dueDate`, `card_type`, `card_no`) VALUES
+(1, '40000.00', '0.00', '40000.00', 'Amanda Ranasinghe', '2021-06-02', 'cash', '', '', '', '', '');
+
 -- --------------------------------------------------------
 
 --
@@ -88,13 +96,19 @@ CREATE TABLE `invoice_items` (
   `id` int(11) NOT NULL,
   `invoice_id` int(11) NOT NULL,
   `product` varchar(300) NOT NULL,
-  `warranty` varchar(250) NOT NULL DEFAULT '0',
-  `serial_no` varchar(250) NOT NULL DEFAULT '0',
-  `qty` varchar(300) NOT NULL,
+  `measurement` varchar(10) NOT NULL,
+  `weight` double(10,2) NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `discount` decimal(10,2) NOT NULL DEFAULT '0.00',
   `amount` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `invoice_items`
+--
+
+INSERT INTO `invoice_items` (`id`, `invoice_id`, `product`, `measurement`, `weight`, `price`, `discount`, `amount`) VALUES
+(1, 1, 'Rings', '18', 200.00, '200.00', '0.00', '40000.00');
 
 -- --------------------------------------------------------
 
@@ -107,15 +121,17 @@ CREATE TABLE `material_stock` (
   `item_name` varchar(255) NOT NULL,
   `measurement` varchar(100) NOT NULL,
   `weight` int(11) NOT NULL,
-  `note` text NOT NULL
+  `price` double(10,2) NOT NULL,
+  `note` text NOT NULL,
+  `update_date` varchar(20) NOT NULL DEFAULT '0000-00-00'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `material_stock`
 --
 
-INSERT INTO `material_stock` (`id`, `item_name`, `measurement`, `weight`, `note`) VALUES
-(1, 'Rings', '18', 2200, 'Jewellery is commonly measured in carats, grams or troy ounces. \r\nOne carat is equal to exactly 0.2g (200mg).                                                  ');
+INSERT INTO `material_stock` (`id`, `item_name`, `measurement`, `weight`, `price`, `note`, `update_date`) VALUES
+(1, 'Rings', '18', 2200, 200.00, 'Jewellery is commonly measured in carats, grams or troy ounces. \r\nOne carat is equal to exactly 0.2g (200mg).                                                  ', '2021-05-31');
 
 -- --------------------------------------------------------
 
@@ -132,15 +148,41 @@ CREATE TABLE `mortgage` (
   `weight` text NOT NULL,
   `interestRate` double(10,2) NOT NULL,
   `timePeriod` varchar(10) NOT NULL,
-  `mortgageAdvance` double(10,2) NOT NULL
+  `mortgageAdvance` double(10,2) NOT NULL,
+  `status` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `mortgage`
 --
 
-INSERT INTO `mortgage` (`M_id`, `customerID`, `mortgageDate`, `rescueDate`, `itemDetail`, `weight`, `interestRate`, `timePeriod`, `mortgageAdvance`) VALUES
-(1, 1, '2021-05-29', '2021-12-30', 'aaaa', '200', 5.00, '25/05/00', 30000.00);
+INSERT INTO `mortgage` (`M_id`, `customerID`, `mortgageDate`, `rescueDate`, `itemDetail`, `weight`, `interestRate`, `timePeriod`, `mortgageAdvance`, `status`) VALUES
+(1, 1, '2021-04-29', '2021-12-30', 'Lorem epsum', '200', 5.00, '01/08/00', 30000.00, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `renewing`
+--
+
+CREATE TABLE `renewing` (
+  `id` int(7) NOT NULL,
+  `renewDate` varchar(20) NOT NULL,
+  `month` varchar(10) NOT NULL,
+  `year` varchar(10) NOT NULL,
+  `payment` double(10,2) NOT NULL DEFAULT '0.00',
+  `dueInterest` double(10,2) NOT NULL,
+  `total_paid` double(10,2) NOT NULL,
+  `renewAmt` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `pawningID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `renewing`
+--
+
+INSERT INTO `renewing` (`id`, `renewDate`, `month`, `year`, `payment`, `dueInterest`, `total_paid`, `renewAmt`, `pawningID`) VALUES
+(1, '2021-06-01', '06', '2021', 2000.00, 1500.00, 2000.00, '29500.00', 1);
 
 -- --------------------------------------------------------
 
@@ -176,7 +218,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `user_role`) VALUES
-(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 1);
+(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 1),
+(2, 'user', '698d51a19d8a121ce581499d7b701668', 1);
 
 -- --------------------------------------------------------
 
@@ -237,6 +280,12 @@ ALTER TABLE `mortgage`
   ADD PRIMARY KEY (`M_id`);
 
 --
+-- Indexes for table `renewing`
+--
+ALTER TABLE `renewing`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `temp_pos`
 --
 ALTER TABLE `temp_pos`
@@ -262,7 +311,7 @@ ALTER TABLE `user_role`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `dashboard_items`
 --
@@ -272,22 +321,27 @@ ALTER TABLE `dashboard_items`
 -- AUTO_INCREMENT for table `invoice`
 --
 ALTER TABLE `invoice`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `invoice_items`
 --
 ALTER TABLE `invoice_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `material_stock`
 --
 ALTER TABLE `material_stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `mortgage`
 --
 ALTER TABLE `mortgage`
   MODIFY `M_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `renewing`
+--
+ALTER TABLE `renewing`
+  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `temp_pos`
 --
@@ -297,7 +351,7 @@ ALTER TABLE `temp_pos`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `user_role`
 --

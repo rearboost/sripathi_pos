@@ -1,8 +1,8 @@
  <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
-          <a class="navbar-brand brand-logo" href="home.php">
-            <img src="../assets/images/light_logo.png" alt="logo" /> </a>
-          <a class="navbar-brand brand-logo-mini" href="home.php">
+          <a class="navbar-brand brand-logo" href="mortgage.php">
+            <img src="../assets/images/light_logo.png" alt="logo" style="height:80px; width: 80px;" /> </a>
+          <a class="navbar-brand brand-logo-mini" href="mortgage.php">
             <img src="../assets/images/light_logo.png" alt="logo" /> </a>
             <!-- <h3 style="color: #fff; font-weight: 800; padding-top: 15px; border-bottom: 2px solid #fff;">Mobile Shop</h3> -->
         </div>

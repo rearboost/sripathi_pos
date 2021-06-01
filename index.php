@@ -128,10 +128,10 @@
 
             if($row['user_role']==2){
               //header('Location: content/progress.php');
-              echo "<script type='text/javascript'>window.location = \"content/progress.php\"</script>";
+              echo "<script type='text/javascript'>window.location = \"content/renewing.php\"</script>";
              }else{
               //header('Location: content/home.php');
-              echo "<script type='text/javascript'>window.location = \"content/home.php\"</script>";
+              echo "<script type='text/javascript'>window.location = \"content/mortgage.php\"</script>";
              }
         
                  

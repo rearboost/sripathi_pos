@@ -116,9 +116,10 @@
   });
 
   function printForm(id){
-    setTimeout(function(){window.open('print?id='+id, '_blank'); }, 100);
+    // setTimeout(function(){window.open('print?id='+id, '_blank'); }, 100);
 
-    setTimeout(function(){ location.reload(); }, 2500);
+    // setTimeout(function(){ location.reload(); }, 2500);
+      window.location.href = "billing_history.php";
   }
 
   </script>

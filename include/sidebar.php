@@ -125,7 +125,18 @@
             <li class="nav-item">
               <a class="nav-link" href="mortgage.php">
                 <i class="menu-icon typcn typcn-shopping-bag"></i>
-                <span class="menu-title" style="color: chartreuse;">Mortgage</span>
+                <span class="menu-title" style="color: chartreuse;">Pawning</span>
+              </a>
+            </li>
+
+            <?php else: ?>
+            <?php endif ?>
+
+            <?php if ($_SESSION['user_role']==1): ?>
+            <li class="nav-item">
+              <a class="nav-link" href="renewing.php">
+                <i class="menu-icon typcn typcn-shopping-bag"></i>
+                <span class="menu-title" style="color: chartreuse;">Renewing</span>
               </a>
             </li>
 
@@ -159,9 +170,9 @@
             <?php endif ?>
 
 
-            <?php if ($_SESSION['user_role']==1): ?>
+            <?php //if ($_SESSION['user_role']==1): ?>
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#ui-item" aria-expanded="false" aria-controls="ui-item">
                 <i class="menu-icon typcn typcn-coffee"></i>
                 <span class="menu-title">Report</span>
@@ -175,22 +186,50 @@
                   <li class="nav-item">
                     <a class="nav-link" href="#">Stock Report</a>
                   </li>
-                  <!-- <li class="nav-item">
+                  <li class="nav-item">
                     <a class="nav-link" href="report_jobs.php">Job Status Report</a>
-                  </li> -->
+                  </li>
               </div>
-            </li>
+            </li> -->
 
-            <?php else: ?>
-            <?php endif ?>
+            <?php //else: ?>
+            <?php //endif ?>
 
-            <?php if ($_SESSION['user_role']==1): ?>
+            <!-- <?php //if ($_SESSION['user_role']==1): ?>
               <li class="nav-item">
                 <a class="nav-link" href="setting.php">
                   <i class="menu-icon typcn typcn-shopping-bag"></i>
                   <span class="menu-title">Setting</span>
                 </a>
               </li>
+            <?php //else: ?>
+            <?php //endif ?> -->
+
+            <?php if ($_SESSION['user_role']== 1 || $_SESSION['user_role']==  2): ?>
+
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#ui-buyer" aria-expanded="false" aria-controls="ui-buyer">
+                <i class="menu-icon typcn typcn-coffee"></i>
+                <span class="menu-title">Setting</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="ui-buyer">
+                <ul class="nav flex-column sub-menu">
+                    <?php if ($_SESSION['user_role']== 1 || $_SESSION['user_role']==  2): ?>
+                    <li class="nav-item">
+                      <a class="nav-link" href="setting.php">User Setting</a>
+                    </li>
+                    <?php else: ?>
+                    <?php endif ?>
+                    <?php if ($_SESSION['user_role']== 1 ): ?>
+                    <li class="nav-item">
+                      <a class="nav-link" href="price_setting.php">Price Setting</a>
+                    </li>
+                    <?php else: ?>
+                    <?php endif ?>
+                </ul>
+              </div>
+            </li>
             <?php else: ?>
             <?php endif ?>
 

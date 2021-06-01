@@ -48,29 +48,46 @@ include('../include/config.php');
                                 <div class="form-group row">
                                    <label class="col-sm-1.5 col-form-label">Item</label>
                                     <div class="col-sm-3">
-                                      <input list="brow" class="form-control" id="product_name" required>
+                                      <!-- <input list="brow" class="form-control" id="product_name" required>
                                       <datalist id="brow">
                                         <?php
 
-                                            $product2 = "SELECT * FROM material_stock";
-                                            $result2 = mysqli_query($conn,$product2);
-                                            $numRows2 = mysqli_num_rows($result2); 
+                                           // $product2 = "SELECT DISTINCT(item_name)as item_name FROM material_stock";
+                                           // $result2 = mysqli_query($conn,$product2);
+                                           // $numRows2 = mysqli_num_rows($result2); 
                             
-                                            if($numRows2 > 0) {
-                                                while($row2 = mysqli_fetch_assoc($result2)) {
-                                                    echo '<option value ="'.$row2["item_name"].'">';
-                                                }
-                                            }
+                                           // if($numRows2 > 0) {
+                                            //    while($row2 = mysqli_fetch_assoc($result2)) {
+                                            //        echo '<option value ="'.$row2["item_name"].'">';
+                                            //    }
+                                            //}
                                         ?>
-                                      </datalist>  
+                                      </datalist>  -->
+                                      <select class="form-control" name="product_name" id="product_name" required>
+                                        <option value="">--Select Item--</option>
+                                        <?php
+                                            $item = "SELECT DISTINCT(item_name)AS item_name FROM material_stock";
+                                            $result = mysqli_query($conn,$item);
+                                            $numRows = mysqli_num_rows($result); 
+                            
+                                              if($numRows > 0) {
+                                                while($row = mysqli_fetch_assoc($result)) {
+                                                  echo '<option value = "'.$row["item_name"].'"> '. $row['item_name'] .' </option>';
+                                                }
+                                              }
+                                        ?>
+                                    </select> 
                                     </div>
                                     <label class="col-sm-0.5 col-form-label">Measurement</label>
                                     <div class="col-sm-3">
-                                        <input type="text" class="form-control" id="measurement" name="measurement" required>
+                                      <select class="form-control" name="measurement" id="measurement" required>
+                                        <option value="">--Select Item First--</option>
+                                      </select>
                                     </div>
                                     <label class="col-sm-0.5 col-form-label">Weight</label>
                                     <div class="col-sm-2">
                                         <input type="text" class="form-control" id="weight" name="weight" required>
+                                        <input type="hidden" class="form-control" id="up_date" required>
                                     </div>
                                     <div class="col-sm-1 size">
                                         <i class="fa fa-plus-circle pointer" onclick="AddPro()"></i>   
@@ -116,7 +133,7 @@ include('../include/config.php');
                                           echo ' <tr>';
                                           echo ' <td>'.$product.' </td>';
                                           echo ' <td>'.$measurement.' </td>';
-                                          echo ' <td>'.$qty.' </td>';
+                                          echo ' <td>'.$weight.' </td>';
                                           echo ' <td>'.$price.' </td>';
                                           echo ' <td>'.$amount.' </td>';
                                           echo '<td class="td-center"><button class="btn-edit" id="DeleteButton" onclick="removeForm('.$id.')">Delete</button></td>';
@@ -300,10 +317,6 @@ include('../include/config.php');
                               <button type="button" onclick="cancelForm()" class="btn btn-primary" style="width: 38%;">CLOSE</button>
                             </div>
                         </div><!-- end 5th row-->
-
-                        
-                        <!-- Trigger the modal with a button -->
-                        <!-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#exampleModalCenter">Open Modal</button> -->
                     </div>
                   </div>
                 </div>
@@ -368,6 +381,26 @@ include('../include/config.php');
           $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
       });
+      
+      ////////////// get measurements ///////////////////////
+      $("#product_name").on('change',function(){
+        var item = $(this).val();
+        if(item){
+          
+          $.get(
+            "../functions/get_items.php",
+            {item:item},
+            function (data) { 
+              //alert(item)
+              $('#measurement').html(data);
+            }
+          );
+             
+        }else{
+          $('#measurement').html('<option>Select Item First</option>');
+        }
+      });
+
     });
 
     var numberRegex = /^[+-]?\d+(\.\d+)?([eE][+-]?\d+)?$/;
@@ -462,32 +495,22 @@ include('../include/config.php');
 
     });
 
-    $('#customer').on('change',function(){
-      var customer = this.value;
-
-      if(customer=='1'){
-        $('.billing_address').prop('hidden', false);
-        $('.remain_credit').prop('hidden', true);
-      }else{
-        $('.billing_address').prop('hidden', true);
-        $('.remain_credit').prop('hidden', false);
-      }
+    $('#measurement').on('change',function(){
+      var item = $('#product_name').val();
+      var measurement = this.value;
 
       $.ajax({
 
             type: 'post',
-            url: '../functions/get_credit.php',
-            data: {customer_id:customer},
+            url: '../functions/get_upDate.php',
+            data: {item:item,measurement:measurement},
             success:function(response) {
               
               var obj = JSON.parse(response);
 
-              var total     =  obj.total
-              var payment   =  obj.payment
-              
-              var credit = (Number(total) - Number(payment));
+              var up_date  =  obj.upDate
 
-              $('#remain_credit').val(credit.toFixed(2));
+              $('#up_date').val(up_date);
                     
                             
               } 
@@ -591,16 +614,22 @@ include('../include/config.php');
       var addrow  ="addrow";
 
       var product_name= $('#product_name').val();
-      var quantity= $('#quantity').val();
-      var warranty= $('#warranty').val();
-      var serial_no= $('#serial_no').val();
+      var measurement= $('#measurement').val();
+      var weight= $('#weight').val();
 
-      if(product_name!='' && quantity !='' && numberRegex.test(quantity)){
+      var up_date= $('#up_date').val();
+      var date= $('#date').val();
+
+      // if(up_date!=date){
+      //   alert('Price not yet updated');
+      // }else{
+
+      if(product_name!='' && measurement !='' && weight !=''){
 
        $.ajax({
             type: 'post',
             url: '../controller/billing_controller.php',
-            data: {addrow:addrow,product_name:product_name,quantity:quantity,warranty:warranty,serial_no:serial_no},
+            data: {addrow:addrow,product_name:product_name,measurement:measurement,weight:weight},
             success: function (data) {
 
                 if(data==2){
@@ -615,9 +644,9 @@ include('../include/config.php');
                 }else{
 
                     $('#product_name').val("")
-                    $('#quantity').val("")
-                    $('#warranty').val("")
-                    $('#serial_no').val("")
+                    $('#measurement').val("")
+                    $('#weight').val("")
+                    $('#up_date').val("")
 
                     $( "#here" ).load(window.location.href + " #here" );
                     $("#gross").val(data);
@@ -627,6 +656,7 @@ include('../include/config.php');
               } 
         });     
       }
+      //}
     }
 
     // $(".prod_name").click(function() {
@@ -692,40 +722,6 @@ include('../include/config.php');
         });
     }
 
-    /////////////////////////////////////////////////// Form Submit Add  
-
-    // function saveForm(){
-
-    //     var save  ="save";
-    
-    //     var total= $('#total').val();
-    //     var discount= $('#discount').val();
-    //     var payment= $('#payment').val();
-    //     var credit_period= $('#credit_period').val();
-    //     var customer= $('#customer').val();
-    //     var billing_address= $('#billing_address').val();
-    //     var date= $('#date').val();
-
-    //     if(payment!='' && numberRegex.test(payment)){
-
-    //         $.ajax({
-    //             type: 'post',
-    //             url: '../controller/billing_controller.php',
-    //             data: {save:save,total:total,discount:discount,payment:payment,date:date,credit_period:credit_period,billing_address:billing_address,customer:customer},
-    //             success: function (data) {
-
-    //                 swal({
-    //                 title: "Good job !",
-    //                 text: "Successfully Submited",
-    //                 icon: "success",
-    //                 button: "Ok !",
-    //                 });
-    //                 setTimeout(function(){ location.reload(); }, 2500);
-    //             } 
-    //         });  
-    //     }
-    // }
-
      function printForm(){
 
         var save  ="save";
@@ -734,9 +730,7 @@ include('../include/config.php');
         var total= $('#total').val();
         var discount= $('#discount').val();
         var payment= $('#payment').val();
-        var credit_period= $('#credit_period').val();
         var customer= $('#customer').val();
-        var billing_address= $('#billing_address').val();
         var date= $('#date').val();
         var inv_id= $('#inv_id').val();
 
@@ -755,10 +749,10 @@ include('../include/config.php');
             $.ajax({
                 type: 'post',
                 url: '../controller/billing_controller.php',
-                data: {save:save,total:total,discount:discount,payment:payment,date:date,credit_period:credit_period,billing_address:billing_address,customer:customer,payment_type:payment_type,bank:bank,cheque_no:cheque_no,due_date:due_date,card_type:card_type,card_no:card_no},
+                data: {save:save,total:total,discount:discount,payment:payment,date:date,customer:customer,payment_type:payment_type,bank:bank,cheque_no:cheque_no,due_date:due_date,card_type:card_type,card_no:card_no},
                 success: function (data) {
 
-                    setTimeout(function(){window.open('print?id='+inv_id, '_blank'); }, 100);
+                    //setTimeout(function(){window.open('print?id='+inv_id, '_blank'); }, 100);
 
                     setTimeout(function(){ location.reload(); }, 2500);
 

@@ -19,7 +19,7 @@
 
             if($count==0){
 
-                $insert = "INSERT INTO mortgage (customerID,mortgageDate,rescueDate,itemDetail,weight,interestRate,timePeriod,mortgageAdvance) VALUES ('$customer','$mortageDate','$rescueDate','$itemDetail','$weight','$interestRate','$timePeriod','$mortageAdvance')";
+                $insert = "INSERT INTO mortgage (customerID,mortgageDate,rescueDate,itemDetail,weight,interestRate,timePeriod,mortgageAdvance,status) VALUES ('$customer','$mortageDate','$rescueDate','$itemDetail','$weight','$interestRate','$timePeriod','$mortageAdvance',1)";
 
                 $result = mysqli_query($conn,$insert);
                 if($result){

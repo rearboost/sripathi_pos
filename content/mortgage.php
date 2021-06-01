@@ -4,56 +4,6 @@
     // Database Connection
     require '../include/config.php';
 
-     // Get Update Form Data
-    if(isset($_GET['view_id'])){
-
-        $view_id = $_GET['view_id'];
-
-        $sql=mysqli_query($conn,"SELECT * FROM customer C INNER JOIN jobs J ON C.id=J.customerId WHERE J.jobId='$view_id'");  
-        $numRows = mysqli_num_rows($sql); 
-        if($numRows > 0) {
-          while($row = mysqli_fetch_assoc($sql)) {
-
-            $id  = $row['id'];
-            $customerName  = $row['name'];
-            $job_no  = $row['jobNo'];
-            $billing_address  = $row['billing_address'];
-            $accessory   = $row['accessory'];
-            $brand   = $row['brand'];
-            $model   = $row['model'];
-            $serial_no   = $row['serial_no'];
-            $request_date = $row['request_date'];
-            $delivery_date  = $row['delivery_date'];
-            $job_desc   = $row['job_desc'];
-            $advance   = $row['advance'];
-            $user_desc = $row['user_desc'];
-            $service_cost = $row['service_cost'];
-            $discount = $row['discount'];
-            $cash_payment = $row['cash_payment'];
-            $credit_payment = $row['credit_payment'];
-
-            $sql_p=mysqli_query($conn,"SELECT SUM(qty*price) as Ad_amount FROM jobs J LEFT JOIN parts P ON J.jobId=P.jobID  WHERE J.jobID='$view_id' GROUP BY P.jobID");
-                            
-            while($row1 = mysqli_fetch_assoc($sql_p)) {
-
-                $Ad_amount = $row1['Ad_amount'];
-                if(empty($Ad_amount)){
-                    $Ad_amount=0;
-                }
-                $amount = $service_cost+$Ad_amount;
-
-                $total_amount = $amount-$advance;
-            }
-          }
-        }
-    }
-    if(isset($_GET['bill_id'])){
-
-        $bill_id = $_GET['bill_id'];
-
-        $sql=mysqli_query($conn,"UPDATE jobs SET status='finish' WHERE jobId='$bill_id'");  
-    }
-
   ?>
   <!-- include head code here -->
   <?php  include('../include/head.php');   ?>
@@ -79,7 +29,7 @@
                   <h4 class="page-title">Dashboard</h4>
                   <div class="quick-link-wrapper w-100 d-md-flex flex-md-wrap">
                     <ul class="quick-links">
-                      <li><a href="#"> | Mortgage Section</a></li>
+                      <li><a href="#"> | PAWNING SECTION</a></li>
                     </ul>
                   </div>
                 </div>
@@ -91,12 +41,12 @@
                 <div class="col-lg-12 grid-margin stretch-card">
                   <div class="card">
                     <div class="card-body">
-                    <h4 class="card-title">Mortage Form</h4>
+                    <h4 class="card-title">Pawning Form</h4>
 
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Date of mortgage</label>
+                                <label class="col-sm-3 col-form-label">Date of pawning</label>
                                 <div class="col-sm-9">
                                   <input type="date" class="form-control" name="mortageDate" value="<?php if(isset($_GET['view_id'])){ echo $mortageDate;}else{echo date("Y-m-d");} ?>"/>
                                 </div>
@@ -162,19 +112,19 @@
                                 <div class="form-group row">
                                 <label class="col-sm-3 col-form-label">Item Details</label>
                                 <div class="col-sm-9">
-                                    <textarea class="form-control" name="itemDetail" rows="5" placeholder="Short description about this item.."><?php if(isset($_GET['view_id'])){ echo $itemDetail;} ?></textarea>
-                                    <?php
-                                    $get_id = mysqli_query($conn, "SELECT M_id FROM mortgage ORDER BY M_id DESC LIMIT 1");
-
-                                    $data = mysqli_fetch_assoc($get_id);
-
-                                    $next_id = $data['M_id']+1;
-                                    ?>
-                                    <input type="hidden" id="mid" value="<?php echo $next_id; ?>">
+                                  <textarea class="form-control" name="itemDetail" rows="4" placeholder="Short description about this item.."><?php if(isset($_GET['view_id'])){ echo $itemDetail;} ?></textarea>
                                 </div>
                                 </div>
                             </div>
                         </div>
+                        <?php
+                        $get_id = mysqli_query($conn, "SELECT M_id FROM mortgage ORDER BY M_id DESC LIMIT 1");
+
+                        $data = mysqli_fetch_assoc($get_id);
+
+                        $next_id = $data['M_id']+1;
+                        ?>
+                        <input type="hidden" id="mid" value="<?php echo $next_id; ?>">
 
                         <div class="row">
                         <div class="col-md-6">
@@ -199,13 +149,13 @@
                             <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Time period</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" name="timePeriod" value="<?php if(isset($_GET['view_id'])){ echo $timePeriod;} ?>" maxlength="10" minlength="8" placeholder="dd/mm/yyyy"/ onkeyup="this.value=this.value.replace(/^(\d\d)(\d)$/g,'$1/$2').replace(/^(\d\d\/\d\d)(\d+)$/g,'$1/$2').replace(/[^\d\/]/g,'')">
+                                <input type="text" class="form-control" name="timePeriod" value="<?php if(isset($_GET['view_id'])){ echo $timePeriod;} ?>" maxlength="10" minlength="8" placeholder="dd/mm/yy"/ onkeyup="this.value=this.value.replace(/^(\d\d)(\d)$/g,'$1/$2').replace(/^(\d\d\/\d\d)(\d+)$/g,'$1/$2').replace(/[^\d\/]/g,'')">
                             </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Mortgage advance</label>
+                            <label class="col-sm-3 col-form-label">Advance Amount</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" name ="mortageAdvance" value="<?php if(isset($_GET['view_id'])){ echo $mortageAdvance;} ?>" placeholder="LKR.0.00"/>
                             </div>
@@ -213,13 +163,9 @@
                         </div>
                         </div>
 
-                       <!-- <?php // if (isset($_GET['view_id'])): ?>
-                          <input type="hidden" class="form-control" name="view_id" id="view_id" value="<?php // if(isset($_GET['view_id'])){ echo $view_id;} ?>" /> -->
                           <input type="hidden" class="form-control" name="req_add" value="req_add" />
                           <button type="submit" class="btn btn-info btn-fw">PRINT</button>
                           <button type="button" onclick="cancelForm()" class="btn btn-primary btn-fw">Cancel</button>
-                      <!-- <?php // else: ?>
-                      <?php // endif ?> -->
                   
                     </div>
                   </div>
@@ -239,12 +185,13 @@
                         <tr>
                           <th> # </th>
                           <th>Customer</th>
-                          <th>Mortgage Date</th>
+                          <th>NIC</th>
+                          <th>Pawning Date</th>
                           <th>Rescue Date </th>
                           <th>Weight(mg)</th>
                           <th>Interest Rate(%)</th>
                           <th>Time Period</th>
-                          <th>Mortgage Advance</th>
+                          <th>Advance</th>
                           <th>Print</th>
                         </tr>
                       </thead>
@@ -259,6 +206,7 @@
                             while($row = mysqli_fetch_assoc($sql)) {
 
                             $name            = $row['name'];
+                            $nic            = $row['nic'];
                             $mortgageDate    = $row['mortgageDate'];   
                             $rescueDate      = $row['rescueDate'];
                             $itemDetail      = $row['itemDetail'];
@@ -270,6 +218,7 @@
                               echo ' <tr>';
                               echo ' <td>'.$i.' </td>';
                               echo ' <td>'.$name.' </td>';
+                              echo ' <td>'.$nic.' </td>';
                               echo ' <td>'.$mortgageDate.' </td>';
                               echo ' <td>'.$rescueDate.' </td>';
                               //echo ' <td>'.$itemDetail.' </td>';
@@ -427,85 +376,18 @@
         });
       });
 
-    function editForm(id){
-        window.location.href = "billing_service.php?view_id=" + id;
-    }
 
     function cancelForm(){
-        window.location.href = "billing_service.php";
+        window.location.href = "mortgage.php";
     }
-
-    function pushForm(id) {
-
-      $.ajax({
-        url:"../controller/dispatch_controller.php",
-        method:"POST",
-        data:{addfinish_job_edit:id},
-        success:function(data){
-
-          if(data==0){
-
-              swal({
-                title: "Can't Push to next level!",
-                text: "Incompleted",
-                icon: "error",
-                button: "Ok !",
-              });
-
-          }else{
-
-              swal({
-                title: "Good job !",
-                text: "Successfully pushed",
-                icon: "success",
-                button: "Ok !",
-                });
-                setTimeout(function(){ location.reload(); }, 2500);
-          }
-        }
-     });
-   }
 
     // print bill //////
     function printForm(id){
-      window.open('receipt?id='+id, '_blank');
-
-      // window.onafterprint = function(){
-      //   //alert(id)
-      //   window.location.href = "billing_service.php?bill_id=" + id;
-      //   // $(window).off(window.onafterprint);
-      //   // console.log('Print Dialog Closed..');
-      // };
+      //window.open('receipt?id='+id, '_blank');
+      window.location.href = "mortgage.php";
     }
 
-    // function printForm(){
 
-    //     var invoice  ="invoice";
-    
-    //     var amount= $('#amount').val();
-    //     var discount= $('#discount').val();
-    //     var total_amount= $('#total_amount').val();
-    //     var cash= $('#cash_payment  ').val();
-    //     var credit= $('#credit_payment').val();
-    //     var job_id= $('#job_id').val();
-    //     var job_no= $('#job_no').val();
-
-    //     //if(payment!='' && numberRegex.test(payment)){
-
-    //         $.ajax({
-    //             type: 'post',
-    //             url: '../controller/dispatch_controller.php',
-    //             data: {invoice:invoice,amount:amount,discount:discount,total_amount:total_amount,cash:cash,credit:credit},
-    //             success: function (data) {
-
-    //                 setTimeout(function(){window.open('print?id='+inv_id, '_blank'); }, 100);
-
-    //                 setTimeout(function(){ location.reload(); }, 2500);
-
-    //             } 
-    //         });  
-    //     //}
-    // }
 
     function customerForm(){
         $('#myModal').modal('show');
